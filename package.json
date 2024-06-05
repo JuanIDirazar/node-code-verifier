@@ -4,11 +4,12 @@
   "description": "Backend Node + Express + TS + Swagger",
   "main": "index.js",
   "scripts": {
-    "build": "npx tsc",
-    "start": "node dist/index.js",
     "dev": "concurrently \"npx tsc --watch\" \"nodemon -q dist/index.js\"",
     "test": "jest",
-    "serve:coverage": "npm run test && cd coverage/lcov-report && npx serve"
+    "serve:coverage": "npm run test && cd coverage/lcov-report && npx serve",
+    "build": "npx webpack --mode development ",
+    "start": "node dist/index.js",
+    "build:prod": "npx webpack --mode production"
   },
   "repository": {
     "type": "git",
@@ -33,7 +34,10 @@
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
     "helmet": "^7.1.0",
-    "picocolors": "^1.0.1"
+    "mongoose": "^8.4.1",
+    "picocolors": "^1.0.1",
+    "ts-loader": "^9.5.1",
+    "tsoa": "^6.2.1"
   },
   "devDependencies": {
     "@eslint/js": "^9.4.0",
