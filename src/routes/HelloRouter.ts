@@ -1,6 +1,6 @@
 import express, { Request,Response } from "express";
-import { HelloController } from "@/controller/HelloController";
-import { LogInfo } from "@/utils/logger";
+import { HelloController } from "../controller/HelloController";
+import { LogInfo } from "../utils/logger";
 
 
 // Router from express
@@ -22,6 +22,6 @@ helloRouter.route('/')
     });
 
 //Export the Router
-export default  helloRouter;
+export default helloRouter;
     
 
