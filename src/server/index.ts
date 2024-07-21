@@ -1,4 +1,6 @@
 import express, {Express,Request,Response} from "express";
+//Swagger
+import swaggerUi from 'swagger-ui-express';
 
 //Environment Variables
 import dotenv from "dotenv";
@@ -16,6 +18,19 @@ import rootRouter from '../routes'; // Import the rootRouter variable from the '
 //Create Express App
 const app: Express = express();
 const port: string | number = process.env.PORT || 8000;
+
+
+// * Swagger Configuration and route
+app.use(
+    '/docs',
+    swaggerUi.serve,
+    swaggerUi.setup(undefined, {
+        swaggerOptions: {
+            url: '/swagger.json',
+            explorer: true,
+        }
+    })
+)
 
 //Define SERVER to use "/api" and use rootRouter from 'index.ts' in routes
 //From this point onover: http://localhost:8000/api/...
