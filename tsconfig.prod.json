@@ -1,0 +1,16 @@
+{
+    "extends": "./tsconfig.json",
+    "compilerOptions": {
+      "outDir": "./dist",
+      "sourceMap": false,         // Desactiva los mapas de origen para producción
+      "declaration": false,      // Desactiva la generación de archivos `.d.ts` para producción
+      "removeComments": true,    // Elimina comentarios en la salida
+      "strict": true,            // Mantén las opciones estrictas, opcional
+      "target": "ES2020",        // Actualiza el target a una versión moderna de ECMAScript
+      "module": "commonjs",     // CommonJS es adecuado para Node.js
+      "esModuleInterop": true   // Asegura la interoperabilidad de módulos
+    },
+    "include": ["src/**/*"],    // Incluye todos los archivos TS en src
+    "exclude": ["node_modules", "**/*.test.ts"] // Excluye dependencias y archivos de prueba
+  }
+  

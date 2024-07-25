@@ -1,27 +1,25 @@
-import express, {Express,Request,Response} from "express";
-//Swagger
+import express, { Express, Request, Response } from "express";
+// Swagger
 import swaggerUi from 'swagger-ui-express';
-
-//Environment Variables
+// Environment Variables
 import dotenv from "dotenv";
-//Security
+// Security
 import cors from 'cors';
 import helmet from 'helmet';
+// Root Routes
+import rootRouter from '../routes';
+import mongoose from "mongoose";
+import { LogError, LogSuccess, LogWarning } from "../utils/logger";
 
-//TODO HTTPS
+// Load environment variables
+dotenv.config();
 
-//Root Routes
-import routes from '../routes';
-import server from "../routes";
-import rootRouter from '../routes'; // Import the rootRouter variable from the '../routes' file
-
-//Create Express App
-const app: Express = express();
-const port: string | number = process.env.PORT || 8000;
-
+// Create Express App
+const server: Express = express();
+let PORT: number = parseInt(process.env.PORT || '8000', 10);
 
 // * Swagger Configuration and route
-app.use(
+server.use(
     '/docs',
     swaggerUi.serve,
     swaggerUi.setup(undefined, {
@@ -30,33 +28,70 @@ app.use(
             explorer: true,
         }
     })
-)
+);
 
-//Define SERVER to use "/api" and use rootRouter from 'index.ts' in routes
-//From this point onover: http://localhost:8000/api/...
+// Define SERVER to use "/api" and use rootRouter from 'index.ts' in routes
+// From this point onward: http://localhost:8000/api/...
+server.use('/api', rootRouter);
 
-server.use(
-    '/api',
-    rootRouter
-    );
-
-//Static Server
+// Static Server
 server.use(express.static('public'));
 
-//TODO Mongoose Connection
+// TODO Mongoose Connection
 
-//Security Config
+// Security Config
 server.use(helmet());
-server.use(cors()); 
+server.use(cors());
 
 // Content Type Config:
-server.use(express.urlencoded({extended: true, limit: '50mb'}));
-server.use(express.json({limit: '50mb'}));
+server.use(express.urlencoded({ extended: true, limit: '50mb' }));
+server.use(express.json({ limit: '50mb' }));
 
-//Redirection Config
+// Función para iniciar el servidor
+const startServer = () => {
+    server.listen(PORT, () => {
+        LogSuccess(`[SERVER ON]: Running at http://localhost:${PORT}/api`);
+    }).on('error', handleServerError);
+};
+
+// Manejo de errores del servidor
+const handleServerError = (error: NodeJS.ErrnoException) => {
+    if (error.code === 'EADDRINUSE') {
+        LogError(`[SERVER ERROR]: The port ${PORT} is already in use.`);
+        PORT += 1; // Incrementar el puerto
+        LogWarning(`Trying new port ${PORT}...`);
+        startServer(); // Intentar iniciar el servidor con el nuevo puerto
+    } else {
+        LogError(`[SERVER ERROR]: ${error.message}`);
+        process.exit(1);
+    }
+};
+
+// Manejo de excepciones no capturadas y rechazos de promesas
+process.on('uncaughtException', (error: any) => {
+    if (error.code === 'EADDRINUSE') {
+        LogError(`[UNCAUGHT EXCEPTION]: The port ${PORT} is already in use.`);
+        PORT += 1; // Incrementar el puerto
+        LogWarning(`Trying new port ${PORT}...`);
+        startServer(); // Intentar iniciar el servidor con el nuevo puerto
+    } else {
+        LogError(`[UNCAUGHT EXCEPTION]: ${error.message}`);
+        process.exit(1);
+    }
+});
+
+process.on('unhandledRejection', (reason, promise) => {
+    LogError(`[UNHANDLED REJECTION]: ${reason}`);
+    // Manejo de errores personalizado o reinicio del servidor
+});
+
+// Iniciar el servidor
+startServer();
+
+// Redirection Config
 // http://localhost:8000/   --> http://localhost:8000/api
 server.get('/', (req: Request, res: Response) => {
     res.redirect('/api');
-})
+});
 
 export default server;
