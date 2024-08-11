@@ -6,6 +6,7 @@
 import express, {Request, Response} from "express";
 import helloRouter from "../routes/HelloRouter";
 import { LogInfo } from "../utils/logger";
+import usersRouter from "./UserRouter";
 
 // Server Instance
 let server = express();
@@ -26,5 +27,8 @@ rootRouter.get('/', (req: Request, res:Response) => {
 server.use('/', rootRouter);        //http://localhost:8000/api
 server.use('/hello', helloRouter);  //http://localhost:8000/api/hello --> HelloRouter
 //Add more redirections here
+server.use('/users', usersRouter);  //http://localhost:8000/api/users --> UserRouter    
+
+
 
 export default server;

@@ -26,7 +26,10 @@ module.exports = (env, argv) => {
             ],
         },
         resolve: {
-            extensions: ['.tsx', '.ts', '.js'],
+            alias: {
+                '@': path.resolve(__dirname, 'src/')
+            },
+            extensions: ['.ts', '.js']
         },
         externals: [nodeExternals()],
         devtool: isProduction ? false : 'source-map', // No source maps en producción

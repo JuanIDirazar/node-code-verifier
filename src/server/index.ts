@@ -37,7 +37,27 @@ server.use('/api', rootRouter);
 // Static Server
 server.use(express.static('public'));
 
-// TODO Mongoose Connection
+
+// Mongoose Connection
+mongoose.connect('mongodb://localhost:27017/codeverification')
+    .then(() => {
+        console.log('Connected to MongoDB');
+    })
+    .catch((error) => {
+        console.error('Error connecting to MongoDB:', error);
+    });
+    
+mongoose.connection.on('connected', () => {
+    console.log('Mongoose connected to db');
+});
+
+mongoose.connection.on('error', (err) => {
+    console.log('Mongoose connection error:', err);
+});
+
+mongoose.connection.on('disconnected', () => {
+    console.log('Mongoose disconnected');
+});
 
 // Security Config
 server.use(helmet());
